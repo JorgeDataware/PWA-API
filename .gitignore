@@ -1,0 +1,104 @@
+# -------------------------------------------------------------------------
+# Compilación y Salidas (Build & Output)
+# -------------------------------------------------------------------------
+# Carpetas de salida de compilación de C#
+bin/
+obj/
+
+# Carpetas de publicación y artefactos
+publish/
+Release/
+Debug/
+out/
+artifacts/
+
+# Archivos de profiling y reportes de cobertura de código
+*.clog
+*.pstat
+*.gpstate
+*.coverage
+*.coveragexml
+_NCrunch_*
+.ncrunchexclusions
+Edge/
+Generated_Code/
+
+# -------------------------------------------------------------------------
+# Herramientas de .NET y NuGet
+# -------------------------------------------------------------------------
+# Caché de paquetes locales (si se configura a nivel de proyecto)
+packages/
+# Archivos generados por la restauración de NuGet
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+
+# Herramientas locales de .NET (.config/dotnet-tools.json NO se ignora, pero sus binarios sí)
+.dotnet/
+
+# -------------------------------------------------------------------------
+# Configuración de IDEs y Editores
+# -------------------------------------------------------------------------
+# Visual Studio
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.vshost.exe
+*.vshost.exe.config
+*.vshost.exe.manifest
+*.clr
+*.userprefs
+
+# Visual Studio Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+
+# JetBrains Rider / IntelliJ
+.idea/
+*.sln.iml
+
+# -------------------------------------------------------------------------
+# Configuraciones y Secretos (¡Crucial para APIs!)
+# -------------------------------------------------------------------------
+# Archivos de variables de entorno locales
+.env
+.env.*
+!.env.example
+
+# Archivo de secretos de usuario de .NET 
+# (Por defecto .NET los guarda fuera de la carpeta del proyecto, pero se incluye por seguridad)
+secrets.json
+
+# Si manejas configuraciones específicas de producción localmente
+appsettings.Production.json
+appsettings.Local.json
+
+# -------------------------------------------------------------------------
+# Bases de Datos Locales
+# -------------------------------------------------------------------------
+# SQLite (Muy común para pruebas locales o desarrollo rápido)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# SQL Server LocalDB / Express
+*.mdf
+*.ldf
+
+# Archivos de logs de Entity Framework u otros ORMs
+*.log
+
+# -------------------------------------------------------------------------
+# Archivos del Sistema Operativo
+# -------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
