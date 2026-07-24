@@ -1,5 +1,6 @@
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -82,7 +83,11 @@ public static class ServiceExtensions
                 {
                     OnTokenValidated = async context =>
                     {
-                        var subject = context.Principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                        // JwtBearer maps the standard `sub` claim to NameIdentifier by
+                        // default. Accept both representations so a valid token is not
+                        // rejected solely because of claim mapping.
+                        var subject = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                                      ?? context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
                         if (!int.TryParse(subject, out var userId))
                         {
                             context.Fail("Invalid user token.");
