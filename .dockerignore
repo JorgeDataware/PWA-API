@@ -1,0 +1,11 @@
+# Build outputs are platform-specific and must never overwrite the assets
+# restored inside the Linux build container.
+bin/
+obj/
+
+# Repository and editor metadata are not needed to compile the API.
+.git/
+.vs/
+.idea/
+*.user
+*.suo

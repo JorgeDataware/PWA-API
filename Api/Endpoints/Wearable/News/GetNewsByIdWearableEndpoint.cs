@@ -11,7 +11,7 @@ public class GetNewsByIdWearableEndpoint(INewsService newsService) : Endpoint<Ge
     public override void Configure()
     {
         Get("/api/wearable/news/{id}");
-        Roles("Admin", "User");
+        AllowAnonymous();
         Tags("Wearable - News");
         Summary(s =>
         {

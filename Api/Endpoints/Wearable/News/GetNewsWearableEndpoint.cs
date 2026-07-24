@@ -9,7 +9,7 @@ public class GetNewsWearableEndpoint(INewsService newsService) : EndpointWithout
     public override void Configure()
     {
         Get("/api/wearable/news");
-        Roles("Admin", "User");
+        AllowAnonymous();
         Tags("Wearable - News");
         Summary(s =>
         {

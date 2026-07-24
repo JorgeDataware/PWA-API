@@ -28,6 +28,14 @@ builder.Services.AddFastEndpoints()
         o.AutoTagPathSegmentIndex = 0;
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy => policy
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
+
 var app = builder.Build();
 
 // Ejecutar migraciones automáticamente al iniciar (de forma no bloqueante)
@@ -84,6 +92,7 @@ _ = Task.Run(async () =>
 });
 
 app.UseMiddleware<GlobalExceptionHandler>();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -114,5 +123,6 @@ app.MapScalarApiReference(options =>
 
 // Redirige la raíz a la documentación
 app.MapGet("/", () => Results.Redirect("/scalar/v1")).AllowAnonymous();
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" })).AllowAnonymous();
 
 app.Run();
