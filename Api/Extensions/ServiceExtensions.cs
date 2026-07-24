@@ -1,4 +1,5 @@
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -76,6 +77,24 @@ public static class ServiceExtensions
                     ValidIssuer = configuration["Jwt:Issuer"],
                     ValidAudience = configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        var subject = context.Principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                        if (!int.TryParse(subject, out var userId))
+                        {
+                            context.Fail("Invalid user token.");
+                            return;
+                        }
+
+                        var repository = context.HttpContext.RequestServices
+                            .GetRequiredService<IUserRepository>();
+                        var user = await repository.GetByIdAsync(userId);
+                        if (user is null || !user.IsActive)
+                            context.Fail("User account is disabled.");
+                    }
                 };
             });
 

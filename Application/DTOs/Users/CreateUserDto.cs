@@ -5,5 +5,6 @@ public record CreateUserDto(
     string Username,
     string Email,
     string Password,
-    int Role
+    int Role,
+    bool MustChangePassword = false
 );

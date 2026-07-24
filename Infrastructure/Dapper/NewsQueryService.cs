@@ -13,8 +13,8 @@ public class NewsQueryService(IDbConnectionFactory connectionFactory) : INewsQue
     {
         const string sql = """
             SELECT u.id, u.full_name, u.username, u.email,
-                   CASE u.role WHEN 1 THEN 'Admin' WHEN 2 THEN 'User' ELSE 'User' END AS role,
-                   u.created_at
+                   CASE u.role WHEN 1 THEN 'Admin' WHEN 2 THEN 'User' WHEN 3 THEN 'Guest' ELSE 'User' END AS role,
+                   u.created_at, u.last_login_at, u.is_active, u.must_change_password
             FROM users u
             ORDER BY u.id
             """;
@@ -26,8 +26,8 @@ public class NewsQueryService(IDbConnectionFactory connectionFactory) : INewsQue
     {
         const string sql = """
             SELECT u.id, u.full_name, u.username, u.email,
-                   CASE u.role WHEN 1 THEN 'Admin' WHEN 2 THEN 'User' ELSE 'User' END AS role,
-                   u.created_at
+                   CASE u.role WHEN 1 THEN 'Admin' WHEN 2 THEN 'User' WHEN 3 THEN 'Guest' ELSE 'User' END AS role,
+                   u.created_at, u.last_login_at, u.is_active, u.must_change_password
             FROM users u
             WHERE u.id = @Id
             """;

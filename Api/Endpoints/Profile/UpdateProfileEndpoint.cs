@@ -18,7 +18,7 @@ public class UpdateProfileEndpoint(IUserService userService) : Endpoint<UpdatePr
     public override void Configure()
     {
         Put("/api/profile");
-        Roles("Admin", "User");
+        Roles("Admin", "User", "Guest");
         Tags("Profile");
         Summary(s =>
         {

@@ -33,6 +33,9 @@ public class UserRepository(AppDbContext context) : IUserRepository
         await context.SaveChangesAsync();
     }
 
+    public Task<int> CountActiveAdminsAsync() =>
+        context.Users.CountAsync(u => u.IsActive && u.Role == Domain.Enums.UserRole.Admin);
+
     public Task<bool> ExistsByEmailAsync(string email) =>
         context.Users.AnyAsync(u => u.Email == email);
 

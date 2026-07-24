@@ -9,7 +9,7 @@ public class GetNewsEndpoint(INewsService newsService) : EndpointWithoutRequest<
     public override void Configure()
     {
         Get("/api/web/news");
-        Roles("Admin", "User");
+        Roles("Admin", "User", "Guest");
         Tags("Web - News");
         Summary(s =>
         {

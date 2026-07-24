@@ -9,5 +9,8 @@ public interface IUserService
     Task<Result<UserDto>> GetByIdAsync(int id);
     Task<Result<UserDto>> CreateAsync(CreateUserDto dto);
     Task<Result<UserDto>> UpdateAsync(int id, UpdateUserDto dto);
-    Task<Result<bool>> DeleteAsync(int id);
+    Task<Result<UserDto>> SetActiveAsync(int id, bool isActive, int actorUserId);
+    // Kept as a compatibility route, but deletion is logical: it deactivates
+    // the account and preserves its record for audit purposes.
+    Task<Result<bool>> DeleteAsync(int id, int actorUserId);
 }

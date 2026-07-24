@@ -10,7 +10,7 @@ public class GetProfileEndpoint(IUserService userService) : EndpointWithoutReque
     public override void Configure()
     {
         Get("/api/profile");
-        Roles("Admin", "User");
+        Roles("Admin", "User", "Guest");
         Tags("Profile");
         Summary(s =>
         {

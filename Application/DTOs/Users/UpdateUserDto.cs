@@ -5,5 +5,6 @@ public record UpdateUserDto(
     string? Username,
     string? Email,
     string? Password,
-    int? Role
+    int? Role,
+    bool? MustChangePassword = null
 );

@@ -12,6 +12,7 @@ public class UpdateUserRequest
     public string? Email { get; set; }
     public string? Password { get; set; }
     public int? Role { get; set; }
+    public bool? MustChangePassword { get; set; }
 }
 
 public class UpdateUserEndpoint(IUserService userService) : Endpoint<UpdateUserRequest, UserDto>
@@ -26,7 +27,7 @@ public class UpdateUserEndpoint(IUserService userService) : Endpoint<UpdateUserR
 
     public override async Task HandleAsync(UpdateUserRequest req, CancellationToken ct)
     {
-        var dto = new UpdateUserDto(req.FullName, req.Username, req.Email, req.Password, req.Role);
+        var dto = new UpdateUserDto(req.FullName, req.Username, req.Email, req.Password, req.Role, req.MustChangePassword);
         var result = await userService.UpdateAsync(req.Id, dto);
         if (!result.IsSuccess)
         {

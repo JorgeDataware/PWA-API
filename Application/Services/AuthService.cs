@@ -12,9 +12,11 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
     public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
     {
         var user = await userRepository.GetByEmailAsync(request.Email);
-        if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        if (user is null || !user.IsActive || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             return Result<LoginResponse>.Unauthorized("Invalid email or password.");
 
+        user.LastLoginAt = DateTime.UtcNow;
+        await userRepository.UpdateAsync(user);
         return BuildLoginResponse(user);
     }
 

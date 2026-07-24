@@ -41,7 +41,8 @@ public class UserService(
             Username = dto.Username,
             Email = dto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            Role = (UserRole)dto.Role
+            Role = (UserRole)dto.Role,
+            MustChangePassword = dto.MustChangePassword
         };
 
         await userRepository.AddAsync(user);
@@ -65,18 +66,40 @@ public class UserService(
         if (dto.Email is not null) user.Email = dto.Email;
         if (dto.Password is not null) user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
         if (dto.Role.HasValue) user.Role = (UserRole)dto.Role.Value;
+        if (dto.MustChangePassword.HasValue) user.MustChangePassword = dto.MustChangePassword.Value;
 
         await userRepository.UpdateAsync(user);
         return Result<UserDto>.Success(mapper.Map<UserDto>(user));
     }
 
-    public async Task<Result<bool>> DeleteAsync(int id)
+    public async Task<Result<UserDto>> SetActiveAsync(int id, bool isActive, int actorUserId)
+    {
+        if (id == actorUserId && !isActive)
+            return Result<UserDto>.Failure("You cannot deactivate your own account.");
+
+        var user = await userRepository.GetByIdAsync(id);
+        if (user is null)
+            return Result<UserDto>.NotFound($"User with id {id} not found.");
+
+        if (!isActive && user.Role == UserRole.Admin && user.IsActive &&
+            await userRepository.CountActiveAdminsAsync() <= 1)
+            return Result<UserDto>.Failure("At least one active administrator is required.");
+
+        user.IsActive = isActive;
+        user.DeactivatedAt = isActive ? null : DateTime.UtcNow;
+        await userRepository.UpdateAsync(user);
+        return Result<UserDto>.Success(mapper.Map<UserDto>(user));
+    }
+
+    public async Task<Result<bool>> DeleteAsync(int id, int actorUserId)
     {
         var user = await userRepository.GetByIdAsync(id);
         if (user is null)
             return Result<bool>.NotFound($"User with id {id} not found.");
 
-        await userRepository.DeleteAsync(user);
-        return Result<bool>.Success(true);
+        var result = await SetActiveAsync(id, false, actorUserId);
+        return result.IsSuccess
+            ? Result<bool>.Success(true)
+            : Result<bool>.Failure(result.Error!, result.StatusCode);
     }
 }

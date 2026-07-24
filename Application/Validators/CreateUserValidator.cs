@@ -12,6 +12,6 @@ public class CreateUserValidator : AbstractValidator<CreateUserDto>
             .Matches("^[a-zA-Z0-9_]+$").WithMessage("Username can only contain letters, numbers, and underscores.");
         RuleFor(x => x.Email).NotEmpty().EmailAddress();
         RuleFor(x => x.Password).NotEmpty().MinimumLength(6);
-        RuleFor(x => x.Role).InclusiveBetween(1, 2);
+        RuleFor(x => x.Role).InclusiveBetween(1, 3);
     }
 }

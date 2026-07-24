@@ -11,6 +11,10 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public UserRole Role { get; set; } = UserRole.User;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? LastLoginAt { get; set; }
+    public bool IsActive { get; set; } = true;
+    public DateTime? DeactivatedAt { get; set; }
+    public bool MustChangePassword { get; set; }
 
     public ICollection<News> AuthoredNews { get; set; } = [];
     public ICollection<Favorite> Favorites { get; set; } = [];

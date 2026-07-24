@@ -11,7 +11,7 @@ public class GetNewsByIdEndpoint(INewsService newsService) : Endpoint<GetNewsByI
     public override void Configure()
     {
         Get("/api/web/news/{id}");
-        Roles("Admin", "User");
+        Roles("Admin", "User", "Guest");
         Tags("Web - News");
         Summary(s => s.Summary = "[Web] Get news by ID");
     }
