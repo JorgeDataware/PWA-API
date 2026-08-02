@@ -331,7 +331,7 @@ Elimina un usuario.
 
 Retorna todas las noticias con contenido completo.
 
-**Auth:** Bearer token — rol `Admin` o `User`
+**Auth:** ninguna — endpoint público (TechNews es un portal de noticias, la lectura no requiere cuenta).
 
 **Sin request body.**
 
@@ -369,7 +369,7 @@ Ordenado por `publishedAt DESC`.
 
 Retorna una noticia por ID con contenido completo.
 
-**Auth:** Bearer token — rol `Admin` o `User`
+**Auth:** ninguna — endpoint público.
 
 **Path params:** `id` (number)
 
@@ -380,6 +380,27 @@ Retorna una noticia por ID con contenido completo.
 | Status | Condición |
 |--------|-----------|
 | `404` | Noticia no encontrada |
+
+---
+
+### `GET /api/web/news/search`
+
+Búsqueda interna de noticias por título o contenido (coincidencia de subcadena, sin distinguir
+mayúsculas/minúsculas). Corre enteramente sobre la base de datos propia — no depende de ningún motor de
+búsqueda de terceros.
+
+**Auth:** ninguna — endpoint público.
+
+**Query params:**
+
+| Param | Tipo | Requerido |
+|-------|------|-----------|
+| `q` | string | sí (si viene vacío, retorna un array vacío) |
+
+**Ejemplo:** `GET /api/web/news/search?q=flutter`
+
+**Respuesta exitosa — `200`:** Array de `NewsDto` (mismo shape que `GET /api/web/news`), ordenado por
+`publishedAt DESC`.
 
 ---
 

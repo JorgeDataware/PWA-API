@@ -12,5 +12,6 @@ public interface INewsQueryService
     Task<NewsDto?> GetNewsByIdAsync(int id);
     Task<IEnumerable<NewsWearableDto>> GetAllNewsWearableAsync();
     Task<NewsWearableDto?> GetNewsByIdWearableAsync(int id);
+    Task<IEnumerable<NewsDto>> SearchNewsAsync(string query);
     Task<IEnumerable<FavoriteDto>> GetFavoritesByUserAsync(int userId);
 }

@@ -24,6 +24,15 @@ public class NewsService(
         return Result<NewsDto>.Success(news);
     }
 
+    public async Task<Result<IEnumerable<NewsDto>>> SearchAsync(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return Result<IEnumerable<NewsDto>>.Success([]);
+
+        var news = await queryService.SearchNewsAsync(query.Trim());
+        return Result<IEnumerable<NewsDto>>.Success(news);
+    }
+
     public async Task<Result<IEnumerable<NewsWearableDto>>> GetAllWearableAsync()
     {
         var news = await queryService.GetAllNewsWearableAsync();

@@ -7,6 +7,7 @@ public interface INewsService
 {
     Task<Result<IEnumerable<NewsDto>>> GetAllAsync();
     Task<Result<NewsDto>> GetByIdAsync(int id);
+    Task<Result<IEnumerable<NewsDto>>> SearchAsync(string query);
     Task<Result<IEnumerable<NewsWearableDto>>> GetAllWearableAsync();
     Task<Result<NewsWearableDto>> GetByIdWearableAsync(int id);
     Task<Result<NewsDto>> CreateAsync(int authorId, CreateNewsDto dto);

@@ -87,6 +87,25 @@ public class NewsQueryService(IDbConnectionFactory connectionFactory) : INewsQue
         return await conn.QueryFirstOrDefaultAsync<NewsWearableDto>(sql, new { Id = id });
     }
 
+    public async Task<IEnumerable<NewsDto>> SearchNewsAsync(string query)
+    {
+        // Internal search over our own database (no third-party/search-engine
+        // dependency): case-insensitive substring match on title or content,
+        // using Postgres' ILIKE. Sufficient for this dataset's size; a
+        // dedicated search engine (Elasticsearch/Postgres full-text) would
+        // only pay off at a scale this app doesn't have.
+        const string sql = """
+            SELECT n.id, n.title, n.author_id, u.full_name AS author_name,
+                   n.content, n.published_at, n.image_url
+            FROM news n
+            INNER JOIN users u ON n.author_id = u.id
+            WHERE n.title ILIKE @Pattern OR n.content ILIKE @Pattern
+            ORDER BY n.published_at DESC
+            """;
+        using var conn = connectionFactory.CreateConnection();
+        return await conn.QueryAsync<NewsDto>(sql, new { Pattern = $"%{query}%" });
+    }
+
     public async Task<IEnumerable<FavoriteDto>> GetFavoritesByUserAsync(int userId)
     {
         const string sql = """
