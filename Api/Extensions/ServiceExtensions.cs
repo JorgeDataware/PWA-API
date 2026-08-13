@@ -41,6 +41,7 @@ public static class ServiceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<INewsRepository, NewsRepository>();
         services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         return services;
     }
 
@@ -52,6 +53,7 @@ public static class ServiceExtensions
         services.AddScoped<INewsService, NewsService>();
         services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddScoped<IAuditService, AuditService>();
         return services;
     }
 

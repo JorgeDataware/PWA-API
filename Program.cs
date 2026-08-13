@@ -5,8 +5,29 @@ using PWA_API.Api.Extensions;
 using PWA_API.Api.Middleware;
 using PWA_API.Infrastructure.Persistence;
 using Scalar.AspNetCore;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Registro estructurado: consola (visible en los logs del hosting) y archivo
+// rotado por día bajo logs/, que es el respaldo auditable cuando hay que
+// reconstruir una falla. Cada línea lleva el TraceId que también se devuelve al
+// cliente en la cabecera X-Trace-Id.
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {TraceId} {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File(
+        path: "logs/technews-.log",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 14,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] trace={TraceId} {Message:lj}{NewLine}{Exception}"));
 
 builder.Services
     .AddDatabase(builder.Configuration)
@@ -91,10 +112,28 @@ _ = Task.Run(async () =>
     }
 });
 
+// El trace id se asigna primero para que todo lo que siga (log, manejo de
+// errores y auditoría) comparta el mismo identificador.
+app.UseMiddleware<RequestTraceMiddleware>();
 app.UseMiddleware<GlobalExceptionHandler>();
+app.UseSerilogRequestLogging(options =>
+{
+    options.MessageTemplate =
+        "{RequestMethod} {RequestPath} respondió {StatusCode} en {Elapsed:0.0} ms";
+    // Una respuesta 4xx/5xx se registra como advertencia/error, no como
+    // información, para que las fallas se puedan filtrar por nivel.
+    options.GetLevel = (httpContext, _, exception) =>
+        exception is not null || httpContext.Response.StatusCode >= 500
+            ? LogEventLevel.Error
+            : httpContext.Response.StatusCode >= 400
+                ? LogEventLevel.Warning
+                : LogEventLevel.Information;
+});
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+// Después de la autenticación para que el registro sepa quién ejecutó la acción.
+app.UseMiddleware<AuditMiddleware>();
 
 app.UseFastEndpoints(c =>
 {

@@ -96,6 +96,9 @@ appsettings.Local.json
 # Archivos de logs de Entity Framework u otros ORMs
 *.log
 
+# Registro estructurado de Serilog (rotado por día)
+logs/
+
 # -------------------------------------------------------------------------
 # Archivos del Sistema Operativo
 # -------------------------------------------------------------------------

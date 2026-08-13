@@ -13,7 +13,12 @@ public class GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptio
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unhandled exception: {Message}", ex.Message);
+            // The trace id goes into the log line *and* into the response body,
+            // so a user-reported error code can be located in the log file and
+            // in the audit trail without guessing.
+            logger.LogError(ex,
+                "Excepción no controlada en {Method} {Path} (trace {TraceId}): {Message}",
+                context.Request.Method, context.Request.Path.Value, context.GetTraceId(), ex.Message);
             await HandleExceptionAsync(context, ex);
         }
     }
@@ -35,7 +40,8 @@ public class GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptio
         var response = JsonSerializer.Serialize(new
         {
             status = (int)statusCode,
-            error = message
+            error = message,
+            traceId = context.GetTraceId()
         });
 
         return context.Response.WriteAsync(response);
